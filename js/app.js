@@ -4,9 +4,9 @@
 	// Your starting point. Enjoy the ride!
 	angular
 		.module('todoApp',[])
-		.controller('TodoController',['$scope',TodoController])
+		.controller('TodoController',['$scope','$location',TodoController])
 
-	function TodoController($scope){
+	function TodoController($scope,$location){
 		var vm = $scope;
 
 		// 展示任务列表
@@ -21,8 +21,6 @@
 		vm.taskList = task;
 		vm.newTask = '';
 		vm.allCompleted = false;
-		vm.isShow = false;
-
 		//添加功能
 		vm.add = function(){
 			if(vm.newTask.trim() === '' ){
@@ -79,9 +77,25 @@
 			})
 		})
 
+
 		//清除已完成任务
 		//有未完成的任务,就让按钮显示
-		vm.$watch('taskList',function( newV,oldV ){
+		//一 监视
+		//
+		// vm.isShow = false;
+		// vm.$watch('taskList',function( newV,oldV ){
+		// 	var temp = false;
+		// 	for(var i=0;i<vm.taskList.length;i++){
+		// 		if(vm.taskList[i].isCompleted){
+		// 			temp = true;
+		// 			break;
+		// 		}
+		// 	}
+		// 	vm.isShow = temp;
+		// },true)
+
+		//二 isShow为函数时
+		vm.isShow = function(){
 			var temp = false;
 			for(var i=0;i<vm.taskList.length;i++){
 				if(vm.taskList[i].isCompleted){
@@ -89,8 +103,9 @@
 					break;
 				}
 			}
-			vm.isShow = temp;
-		},true)
+			return temp;
+		}
+		//清除完成的任务
 		vm.clearCompleted = function(){
 			//保存未完成的任务
 			var temp = [];
@@ -101,5 +116,65 @@
 			}
 			vm.taskList = temp;
 		}
+
+		//显示未完成的任务数
+		vm.getUncompleted = function(){
+			var count = 0;
+			vm.taskList.forEach(function(value){
+				if( !value.isCompleted ){
+					count++;
+				}
+			})
+			return count;
+		}
+
+		//切换不同任务的显示状态
+		//利用过滤器
+		// vm.isSelected = { isCompleted : undefined } //全部匹配
+		// vm.isSelected = { isCompleted : false } //匹配未完成的
+		// vm.isSelected = { isCompleted : true } //匹配完成的
+		// vm.showAll = function(){
+		// 	vm.isSelected = { isCompleted : undefined }
+		// }
+		// vm.showUncompleted = function(){
+		// 	vm.isSelected = { isCompleted : false }
+		// }
+		// vm.showCompleted = function(){
+		// 	vm.isSelected = { isCompleted : true }
+		// }
+		//给按钮加类
+
+
+		//刷新仍保存显示状态
+		//根据url变化 hash值不同,来展示不同状态
+		//不能通过location.hash直接获取,需要注入$location
+		//$location.url() 获取url中#后面的字符串
+		//$watch 只能监视$scope中的属性
+		$scope.location = $location;
+		vm.$watch('location.url()',function( newV,oldV ){
+			console.log(newV.slice(1));
+			// if( newV.slice(1) === '' ){
+			// 	vm.isSelected = { isCompleted : undefined }
+			// }
+			// if( newV.slice(1) === 'active' ){
+			// 	vm.isSelected = { isCompleted : false }
+			// }
+			// if( newV.slice(1) === 'completed' ){
+			// 	vm.isSelected = { isCompleted : true }
+			// }
+
+			//有监事时候  点击的事件就可以取消了
+			switch (newV){
+				case '/':
+				vm.isSelected = { isCompleted : undefined };
+				break;
+				case '/active':
+				vm.isSelected = { isCompleted : false };
+				break;
+				case '/completed':
+				vm.isSelected = { isCompleted : true };
+				break;
+			}
+		})
 	}
 })(window);
