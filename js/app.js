@@ -15,29 +15,43 @@
 			{id:1,name:'喝酒',isCompleted:true},
 			{id:2,name:'烫头',isCompleted:true},
 			{id:3,name:'唱歌',isCompleted:false},
-			{id:4,name:'旅游',isCompleted:true}
+			{id:7,name:'旅游',isCompleted:true}
 		]
 
 		vm.taskList = task;
 		vm.newTask = '';
 
-		//判断id
-		var id = 0;
-		var len = vm.taskList.length;
-		if( len === 0 ){
-			id = 1;
-		}else{
-			id = vm.taskList[len-1].id+1;
-		}
 
+		var id = 0;
 		vm.add = function(){
 			if(vm.newTask.trim() === '' ){
 				return;
+			}
+			//判断id
+			var len = vm.taskList.length;
+			if( len === 0 ){
+				id = 1;
+			}else{
+				id = vm.taskList[len-1].id+1;
 			}
 			vm.taskList.push(
 					{id:id,name:vm.newTask,isCompleted:false}
 				)
 			vm.newTask = '';
+			console.log(len)
+		}
+		vm.remove = function(id){
+			vm.taskList.forEach(function(v,i){
+				if(v.id === id){
+					vm.taskList.splice(i,1)
+				}
+			})
+		}
+		vm.edit = function( id ){
+			vm.editId = id;
+		}
+		vm.upload = function( id ){
+			vm.editId = null;
 		}
 	}
 })(window);
