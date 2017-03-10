@@ -1,6 +1,7 @@
 'use strict';
 (function(angular){
 	angular
+<<<<<<< HEAD
 		.module('todoApp.controller',['ngRoute'])
 		.config(['$routeProvider',function($routeProvider){
 			$routeProvider
@@ -13,6 +14,12 @@
 		.controller('TodoController',['$scope','$routeParams','DataService',TodoController])
 
 		function TodoController( $scope,$routeParams,DataService ){
+=======
+		.module('todoApp.controller',[])
+		.controller('TodoController',['$scope','$location','DataService',TodoController])
+
+		function TodoController( $scope,$location,DataService ){
+>>>>>>> 26289fb8c029f06d34feec13f9a6799ef6a83c18
 			var vm = $scope;
 
 			//添加任务
@@ -48,12 +55,19 @@
 			//全选任务
 			vm.allCompleted = function(){
 				DataService.allCompleted( vm.checkedAll )
+<<<<<<< HEAD
 				DataService.save()
+=======
+				// DataService.save()
+>>>>>>> 26289fb8c029f06d34feec13f9a6799ef6a83c18
 			}
 
 			//保存单选状态
 			vm.toggleItem = function(){
+<<<<<<< HEAD
 				console.log(1)
+=======
+>>>>>>> 26289fb8c029f06d34feec13f9a6799ef6a83c18
 				vm.checkedAll = DataService.isAllCompleted();
 				DataService.save()
 			}
@@ -76,6 +90,7 @@
 			//切换显示状态并记录,刷新不会变
 			//引入$location
 			//利用过滤
+<<<<<<< HEAD
 			// vm.location = $location;
 			// vm.$watch('location.url()',function( newVal,oldVal ){
 			// 	switch (newVal){
@@ -101,5 +116,21 @@
 				default:
 					vm.completedStatus = { isCompleted: undefined }
 			}
+=======
+			vm.location = $location;
+			vm.$watch('location.url()',function( newVal,oldVal ){
+				switch (newVal){
+					case '/':
+						vm.completedStatus = { isCompleted: undefined };
+						break;
+					case '/active':
+						vm.completedStatus = { isCompleted: false };
+						break;
+					case '/completed':
+						vm.completedStatus = { isCompleted: true };
+						break;
+				}
+			})
+>>>>>>> 26289fb8c029f06d34feec13f9a6799ef6a83c18
 		}
 })(angular)
