@@ -1,10 +1,18 @@
 'use strict';
 (function(angular){
 	angular
-		.module('todoApp.controller',[])
-		.controller('TodoController',['$scope','$location','DataService',TodoController])
+		.module('todoApp.controller',['ngRoute'])
+		.config(['$routeProvider',function($routeProvider){
+			$routeProvider
+				.when('/:status?',{
+					// templateUrl: 'routeTpl',
+					templateUrl: './views/views.html',
+					controller: 'TodoController'
+				})
+		}])
+		.controller('TodoController',['$scope','$routeParams','DataService',TodoController])
 
-		function TodoController( $scope,$location,DataService ){
+		function TodoController( $scope,$routeParams,DataService ){
 			var vm = $scope;
 
 			//添加任务
@@ -40,11 +48,12 @@
 			//全选任务
 			vm.allCompleted = function(){
 				DataService.allCompleted( vm.checkedAll )
-				// DataService.save()
+				DataService.save()
 			}
 
 			//保存单选状态
 			vm.toggleItem = function(){
+				console.log(1)
 				vm.checkedAll = DataService.isAllCompleted();
 				DataService.save()
 			}
@@ -67,19 +76,30 @@
 			//切换显示状态并记录,刷新不会变
 			//引入$location
 			//利用过滤
-			vm.location = $location;
-			vm.$watch('location.url()',function( newVal,oldVal ){
-				switch (newVal){
-					case '/':
-						vm.completedStatus = { isCompleted: undefined };
-						break;
-					case '/active':
-						vm.completedStatus = { isCompleted: false };
-						break;
-					case '/completed':
-						vm.completedStatus = { isCompleted: true };
-						break;
-				}
-			})
+			// vm.location = $location;
+			// vm.$watch('location.url()',function( newVal,oldVal ){
+			// 	switch (newVal){
+			// 		case '/':
+			// 			vm.completedStatus = { isCompleted: undefined };
+			// 			break;
+			// 		case '/active':
+			// 			vm.completedStatus = { isCompleted: false };
+			// 			break;
+			// 		case '/completed':
+			// 			vm.completedStatus = { isCompleted: true };
+			// 			break;
+			// 	}
+			// })
+			// console.log($routeParams.status)
+			switch ( $routeParams.status ){
+				case 'active':
+					vm.completedStatus = { isCompleted: false }
+					break;
+				case 'completed':
+					vm.completedStatus = { isCompleted: true }
+					break;
+				default:
+					vm.completedStatus = { isCompleted: undefined }
+			}
 		}
 })(angular)
